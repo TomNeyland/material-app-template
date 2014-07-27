@@ -41,11 +41,11 @@
                 });
 
                 $rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error) {
-                    console.log('failed to change state', event, toState, toParams, fromState, fromParams, error);
+                    console.log('failed to change state', arguments);
                 });
 
                 $rootScope.$on('$stateNotFound', function(event, unfoundState, fromState, fromParams) {
-                    console.log('state not found', event, unfoundState, fromState, fromParams);
+                    console.log('state not found', arguments);
                 });
             }
         ]);

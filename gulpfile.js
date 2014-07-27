@@ -55,7 +55,7 @@ gulp.task('traceur', function() {
         .pipe($.traceur({
             sourceMap: true
         }))
-        .pipe(gulp.dest('./build'));
+        .pipe(gulp.dest(config.appDir + '_app.js'));
 });
 
 gulp.task('watch', function() {
