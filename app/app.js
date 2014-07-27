@@ -5,15 +5,15 @@
 
         angularDependencies = [
             'ui.router',
-            'ui.bootstrap'
+            'ngAnimate'
         ];
 
     define([
         'require',
         'angular',
         'lodash',
-        'ui.bootstrap',
-        'ui.router'
+        'ui.router',
+        'angular-animate'
     ], function(require, angular, _) {
 
         var module = angular.module(moduleName, angularDependencies);
