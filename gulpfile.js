@@ -2,7 +2,9 @@
 
 var gulp = require('gulp'),
     $ = require('gulp-load-plugins')(),
-    del = require('del');
+    del = require('del'),
+    glob = require('glob'),
+    args = require('yargs').argv;
 
 var config = {
     appDir: 'app/',
@@ -10,6 +12,23 @@ var config = {
     port: 8000,
     url: 'http:localhost:'
 };
+
+var loadTasks = function(path) {
+    var glob = require('glob');
+    var object = {};
+    var key;
+
+    glob.sync('*', {
+        cwd: path
+    }).forEach(function(option) {
+        key = option.replace(/\.js$/, '');
+        object[key] = require(path + option);
+    });
+
+    return object;
+};
+
+// loadTasks('./tasks/');
 
 gulp.task('connect', function() {
     var connect = require('connect');
@@ -44,10 +63,21 @@ gulp.task('convert', function() {
 
 gulp.task('sass', function() {
     gulp.src(config.appDir + 'app.scss')
-        .pipe($.sass())
+        .pipe($.sass({
+            sourceComments: 'map'
+        }))
         .pipe($.autoprefixer('last 2 versions'))
         .pipe(gulp.dest(config.appDir))
         .pipe($.connect.reload());
+});
+
+gulp.task('sass-build', function() {
+    gulp.src(config.appDir + 'app.scss')
+        .pipe($.sass({
+            outputStyle: 'compressed'
+        }))
+        .pipe($.autoprefixer('last 2 versions'))
+        .pipe(gulp.dest(config.appDir));
 });
 
 gulp.task('traceur', function() {
@@ -56,6 +86,15 @@ gulp.task('traceur', function() {
             sourceMap: true
         }))
         .pipe(gulp.dest(config.appDir + '_app.js'));
+});
+
+gulp.task('jshint', function() {
+    return gulp.src([
+            'app/**/*.js',
+            '!app/bower_components/**'
+        ])
+        .pipe($.jshint('.jshintrc'))
+        .pipe($.jshint.reporter('jshint-stylish'));
 });
 
 gulp.task('watch', function() {
@@ -72,17 +111,32 @@ gulp.task('watch', function() {
 gulp.task('requirejs', function() {
     $.requirejs({
         mainConfigFile: config.appDir + '/config.js',
-        // baseUrl: config.appDir + 'app.js',
-        name: config.appDir,
+        baseUrl: config.appDir,
+        name: 'app',
         out: 'app.js',
         useStrict: true,
         optimizeCss: 'none',
         generateSourceMaps: false,
         optimize: 'uglify2',
-        preserveLicenseComments: true,
-        excludeShallow: ['ui.router']
+        preserveLicenseComments: true
     })
         .pipe(gulp.dest(config.buildDir));
+});
+
+gulp.task('bump', function() {
+    var bump = args.bump, type;
+
+    if (bump !== undefined && bump === 'major') {
+        type = 'major';
+    } else {
+        type = 'minor';
+    }
+
+    gulp.src(['./bower.json', './package.json'])
+        .pipe($.bump({
+            type: type
+        }))
+        .pipe(gulp.dest('./'));
 });
 
 gulp.task('clean', function(cb) {
@@ -94,4 +148,5 @@ gulp.task('copy', function() {
 });
 
 gulp.task('default', ['connect', 'convert', 'open', 'sass', 'watch']);
-gulp.task('build', ['clean', 'requirejs']);
+gulp.task('build', ['clean', 'copy', 'requirejs']);
+gulp.task('release', ['clean', 'requirejs', 'convert', 'sass-build', 'bump']);
