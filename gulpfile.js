@@ -1,17 +1,11 @@
 'use strict';
 
-var gulp = require('gulp'),
-    $ = require('gulp-load-plugins')(),
-    del = require('del'),
-    glob = require('glob'),
-    args = require('yargs').argv;
+var gulp = require('gulp');
+var $ = require('gulp-load-plugins')();
+var del = require('del');
+var args = require('yargs').argv;
 
-var config = {
-    appDir: 'app/',
-    buildDir: 'build/',
-    port: 8000,
-    url: 'http:localhost:'
-};
+var config = require('./tasks/config');
 
 var loadTasks = function(path) {
     var glob = require('glob');
@@ -21,32 +15,15 @@ var loadTasks = function(path) {
     glob.sync('*', {
         cwd: path
     }).forEach(function(option) {
-        key = option.replace(/\.js$/, '');
-        object[key] = require(path + option);
+        require(path + option)(gulp);
     });
-
-    return object;
 };
 
-// loadTasks('./tasks/');
-
-gulp.task('connect', function() {
-    var connect = require('connect');
-    var app = connect()
-        // .use(require('connect-livereload')())
-        .use(connect.static(config.appDir))
-        .use(connect.directory(config.appDir));
-
-    require('http').createServer(app)
-        .listen(config.port)
-        .on('listening', function() {
-            console.log('Started connect web server on http://localhost:' + config.port);
-        });
-});
+loadTasks('./tasks/options/');
 
 gulp.task('open', function() {
     var options = {
-        url: config.url + config.port
+        url: config.server.url + config.server.port
     };
 
     gulp.src(config.appDir + './index.html')
