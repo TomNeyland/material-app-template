@@ -14,7 +14,7 @@ module.exports = function(gulp) {
         require('http').createServer(app)
             .listen(config.server.port)
             .on('listening', function() {
-                console.log('Started connect web server on http://localhost:' + config.server.port);
+                console.log('Started connect web server on ' + config.server.url + config.server.port);
             });
     });
 };
