@@ -5,7 +5,8 @@
 
         angularDependencies = [
             'ui.router',
-            'ngAnimate'
+            'ngAnimate',
+            'chieffancypants.loadingBar',
         ];
 
     define([
@@ -13,7 +14,8 @@
         'angular',
         'lodash',
         'ui.router',
-        'angular-animate'
+        'angular-animate',
+        'angular-loading-bar'
     ], function(require, angular, _) {
 
         var module = angular.module(moduleName, angularDependencies);
