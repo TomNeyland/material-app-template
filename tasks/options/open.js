@@ -4,7 +4,7 @@
 var config = require('../config');
 
 module.exports = function(gulp, $) {
-    gulp.task('open', function() {
+    return gulp.task('open', function() {
         var options = {
             url: config.server.url + config.server.port
         };

@@ -4,7 +4,7 @@
 var config = require('../config');
 
 module.exports = function(gulp, $) {
-    gulp.task('watch', function() {
+    return gulp.task('watch', function() {
         gulp.watch([
             config.appDir + '**/*.js'
         ], ['traceur']);

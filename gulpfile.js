@@ -3,6 +3,7 @@
 var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
 var args = require('yargs').argv;
+var runSequence = require('run-sequence');
 
 var config = require('./tasks/config');
 
@@ -20,13 +21,17 @@ var loadTasks = function(path) {
 
 loadTasks('./tasks/options/');
 
-gulp.task('default', [
-    'connect',
-    'convert',
-    'open',
-    'sass',
-    'watch'
-]);
+// gulp.task('default', [
+//     'connect',
+//     'convert',
+//     'open',
+//     'sass',
+//     'watch'
+// ]);
+
+gulp.task('default', function(done) {
+    runSequence('convert', 'sass-dev', 'connect', 'open', 'watch');
+});
 
 gulp.task('build', [
     'clean',
