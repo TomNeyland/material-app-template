@@ -36,7 +36,9 @@ Boilerplate for my Angular apps
 |   |── app.scss
 |   |── config.js
 │   |── index.html
-|   |   |   |
+├── tasks/
+├── |── options/
+├── |── config.js
 .bowerrc
 .gitignore
 .jsbeautifyrc
@@ -52,7 +54,7 @@ README.md
 - The project utilizes a fractal pattern
 
 ### JavaScript
-- Each module should be totally self-contained. Any functionality shared across modules should be moved into `common/`
+- Each module should be totally self-contained. Any functionality shared across modules should be moved into `common/`.
 - Modules can have their own directives, services, filters, etc. If multiple files are needed in order to maintain file size,
 a folder should be created (`directives/`, `services/`, etc) and the broken up files should be placed into their respective folders
 with less abstract naming conventions.
@@ -61,9 +63,9 @@ with less abstract naming conventions.
 and the HTML partial and the JavaScript file should be placed together in that folder.
 
 ### Sass
-- `app.scss` is merely a table of contents. There should be no Sass in the file
+- `app.scss` is merely a table of contents. There should be no Sass in the file.
 - Each module is responsible for exporting its submodules. In other words, `app.scss` should only import top level modules.
-- Sass that needs to be shared among modules should be moved into `assets/stylesheets/`
+- Sass that needs to be shared among modules should be moved into `assets/stylesheets/`.
 
 ### Modules
 
@@ -121,7 +123,7 @@ A typical module will look something like this:
 })();
 ```
 
-- It is wrapped in an IIFE
-- require.js is used to generate urls to the templates, so you don't have to
+- Modules are wrapped in IIFEs.
+- `require.js` is used to generate urls to the templates, so you don't have to.
 - Top level modules should import all of their submodules.
-- app.js should only import top level modules
+- `app.js` should only import top level modules.
