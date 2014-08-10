@@ -3,6 +3,7 @@
 var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
 var args = require('yargs').argv;
+// until gulp 4.0
 var runSequence = require('run-sequence');
 
 var config = require('./tasks/config');
@@ -21,28 +22,28 @@ var loadTasks = function(path) {
 
 loadTasks('./tasks/options/');
 
-// gulp.task('default', [
-//     'connect',
-//     'convert',
-//     'open',
-//     'sass',
-//     'watch'
+gulp.task('default', [
+    'connect',
+    'convert',
+    'sass-dev',
+    'open',
+    'watch'
+]);
+
+// gulp.task('default', function(done) {
+//     runSequence('convert', 'sass-dev', 'connect', 'open', 'watch');
+// });
+
+// gulp.task('build', [
+//     'clean',
+//     'copy',
+//     'requirejs'
 // ]);
 
-gulp.task('default', function(done) {
-    runSequence('convert', 'sass-dev', 'connect', 'open', 'watch');
+gulp.task('build', function(done) {
+    runSequence('clean', 'copy', 'requirejs', 'convert', 'sass-build');
 });
 
-gulp.task('build', [
-    'clean',
-    'copy',
-    'requirejs'
-]);
-
-gulp.task('release', [
-    'clean',
-    'requirejs',
-    'convert',
-    'sass-build',
-    'bump'
-]);
+gulp.task('release', ['build'], function() {
+    gulp.task('bump');
+});
