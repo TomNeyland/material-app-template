@@ -9,7 +9,7 @@ module.exports = function(gulp, $) {
             url: config.server.url + config.server.port
         };
 
-        gulp.src(config.appDir + './index.html')
+        gulp.src(config.appDir + '/index.html')
             .pipe($.open('', options));
     });
 };
