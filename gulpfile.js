@@ -1,12 +1,16 @@
 'use strict';
 
 var gulp = require('gulp');
+
 var $ = require('gulp-load-plugins')();
+var _ = require('lodash');
 var args = require('yargs').argv;
 // until gulp 4.0
 var runSequence = require('run-sequence');
+var karma = require('karma').server;
 
 var config = require('./tasks/config');
+var karmaCommonConf = require('./karma.conf');
 
 var loadTasks = function(path) {
     var glob = require('glob');
@@ -29,6 +33,12 @@ gulp.task('default', [
     'open',
     'watch'
 ]);
+
+gulp.task('test', function (done) {
+    karma.start(_.extend({}, karmaCommonConf, {
+        singleRun: true
+    }), done);
+});
 
 // gulp.task('default', function(done) {
 //     runSequence('convert', 'sass-dev', 'connect', 'open', 'watch');
