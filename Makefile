@@ -4,3 +4,10 @@ dependencies:
 	npm install
 	bower cache clean
 	bower install
+
+build:
+	make dependencies
+	gulp build
+
+
+.PHONEY: dependencies build
