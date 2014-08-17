@@ -127,3 +127,4 @@ A typical module will look something like this:
 - `require.js` is used to generate urls to the templates, so you don't have to.
 - Top level modules should import all of their submodules.
 - `app.js` should only import top level modules.
+- `r.js` is used to build all the JavaScript into one file.
