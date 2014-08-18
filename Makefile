@@ -10,4 +10,4 @@ build:
 	gulp build
 
 
-.PHONEY: dependencies build
+.PHONY : build
