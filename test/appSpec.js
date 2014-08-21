@@ -1,8 +1,14 @@
 /* global describe, it, expect, greet */
 
-describe('greeter', function() {
+define([
+    'app',
+    'lodash'
+], function(app, _) {
 
-    it('should say Hello to the World', function() {
-        expect(greet('World')).toEqual('Hello, World!');
+    describe('just checking', function() {
+        it('works for lodash', function() {
+            // just checking that _ works
+            expect(_.size([1,2,3])).toEqual(3);
+        });
     });
 });
