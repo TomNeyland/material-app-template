@@ -10,7 +10,7 @@ var runSequence = require('run-sequence');
 var karma = require('karma').server;
 
 var config = require('./tasks/config');
-var karmaCommonConf = require('./karma.conf');
+// var karmaCommonConf = require('./karma.conf');
 
 var loadTasks = function(path) {
     var glob = require('glob');
@@ -35,9 +35,10 @@ gulp.task('default', [
 ]);
 
 gulp.task('test', function (done) {
-    karma.start(_.extend({}, karmaCommonConf, {
+    karma.start({
+        configFile: __dirname + '/karma.conf.js',
         singleRun: true
-    }), done);
+    }, done);
 });
 
 // gulp.task('default', function(done) {
