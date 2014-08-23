@@ -1,9 +1,8 @@
 /* global describe, it, expect, greet */
 
 define([
-    'app',
     'lodash'
-], function(app, _) {
+], function(_) {
 
     describe('just checking', function() {
         it('works for lodash', function() {
