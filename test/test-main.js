@@ -14,11 +14,6 @@ Object.keys(window.__karma__.files).forEach(function(file) {
     }
 });
 
-// define([
-//     'app/config'
-// ], function(config) {
-//
-// });
 require.config({
     // Karma serves files under /base, which is the basePath from your config file
     baseUrl: '/base',
