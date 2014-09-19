@@ -6,9 +6,8 @@ var $ = require('gulp-load-plugins')();
 var tagVersion = require('gulp-tag-version');
 
 var karma = require('karma').server;
+var serveStatic = require('serve-static');
 
-// var config = require('./tasks/config');
-// var karmaCommonConf = require('./karma.conf');
 var config = {
     app: 'app',
     build: 'build',
@@ -19,27 +18,13 @@ var config = {
     },
 
     files: {
-        html: [
-            'app/**/*.html',
-            '!app/bower_components/**/*.html',
-            '!index.html'
-        ],
-
         js: [
             'gulpfile.js',
             'app/**/*.js',
             '!app/bower_components/**/*.js',
             '!app/templates.js'
         ],
-
-        jsTests: [
-            'gulpfile.js',
-            'app/**/*.js',
-            '!app/bower_components/**/*.js',
-            'app/tests/**/*.js'
-        ],
-
-        sass: {
+        scss: {
             files: [
                 'app/**/*.scss',
                 '!app/bower_components/**/*.scss'
@@ -47,12 +32,7 @@ var config = {
             src: 'app/app.scss',
             devDest: 'app/app.css',
             buildDest: 'build/app.css'
-        },
-
-        ignore: [
-            'app/tests/**/*.js',
-            'app/bower_components/**'
-        ]
+        }
     }
 };
 
@@ -84,7 +64,7 @@ gulp.task('connect', function() {
     var connect = require('connect');
     var serveStatic = require('serve-static');
     var app = connect()
-        .use(serveStatic(config.example));
+        .use(serveStatic(config.app));
 
     require('http').createServer(app)
         .listen(config.server.port)
@@ -112,19 +92,19 @@ gulp.task('convert', function() {
         .pipe(gulp.dest(config.app + 'bower_components/'));
 });
 
-gulp.task('scss-dev', ['convert'], function() {
-    gulp.src(config.app + '/app.scss')
+gulp.task('scss-dev', ['convert'], function(cb) {
+    gulp.src(config.files.scss.src)
         .pipe($.sass({
             sourceComments: 'map',
             sourceMap: 'sass'
         }))
         .pipe($.autoprefixer('last 2 versions'))
-        .pipe(gulp.dest(config.app))
-        .pipe($.connect.reload());
+        .pipe(gulp.dest(config.app));
+    cb();
 });
 
 gulp.task('watch', function() {
-    $.watch(config.scss.files, function(files, cb) {
+    $.watch(config.files.scss.files, function(files, cb) {
         gulp.start('scss-dev', cb);
     });
 });
@@ -141,7 +121,7 @@ gulp.task('requirejs', function() {
         optimize: 'uglify2',
         preserveLicenseComments: true
     })
-        .pipe(gulp.dest(config.buildDir));
+        .pipe(gulp.dest(config.build));
 });
 
 gulp.task('test', function(done) {
@@ -154,7 +134,7 @@ gulp.task('test', function(done) {
 gulp.task('default', [
     'connect',
     'convert',
-    'sass-dev',
+    'scss-dev',
     'open',
     'watch'
 ]);
