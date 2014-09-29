@@ -6,14 +6,17 @@ var $ = require('gulp-load-plugins')();
 var tagVersion = require('gulp-tag-version');
 
 var karma = require('karma').server;
+
 var serveStatic = require('serve-static');
+var browserSync = require('browser-sync');
+var reload = browserSync.reload;
 
 var config = {
     app: 'app',
     build: 'build',
 
     server: {
-        port: 8000,
+        port: 3000,
         url: 'http://localhost:'
     },
 
@@ -73,6 +76,14 @@ gulp.task('connect', function() {
         });
 });
 
+gulp.task('browser-sync', function() {
+    browserSync({
+        server: {
+            baseDir: "./app"
+        }
+    });
+});
+
 gulp.task('copy', function() {
     gulp.src(config.appDir + '**/*.html')
         .pipe(gulp.dest(config.build));
@@ -99,11 +110,14 @@ gulp.task('scss-dev', ['convert'], function(cb) {
             sourceMap: 'sass'
         }))
         .pipe($.autoprefixer('last 2 versions'))
-        .pipe(gulp.dest(config.app));
+        .pipe(gulp.dest(config.app))
+        .pipe(reload({
+            stream: true
+        }));
     cb();
 });
 
-gulp.task('watch', function() {
+gulp.task('watch', ['scss-dev'], function() {
     $.watch(config.files.scss.files, function(files, cb) {
         gulp.start('scss-dev', cb);
     });
@@ -132,10 +146,9 @@ gulp.task('test', function(done) {
 });
 
 gulp.task('default', [
-    'connect',
+    'browser-sync',
     'convert',
     'scss-dev',
-    'open',
     'watch'
 ]);
 
