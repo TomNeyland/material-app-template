@@ -36,10 +36,8 @@ Boilerplate for my Angular apps
 |   |── app.scss
 |   |── config.js
 │   |── index.html
-├── tasks/
-├── |── options/
-├── |── config.js
 .bowerrc
+.editorconfig
 .gitignore
 .jsbeautifyrc
 .jshintrc
