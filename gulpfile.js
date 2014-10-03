@@ -103,13 +103,13 @@ gulp.task('convert', function() {
         .pipe(gulp.dest(config.app + 'bower_components/'));
 });
 
-gulp.task('scss-dev', ['convert'], function(cb) {
+gulp.task('scss-dev', function(cb) {
     gulp.src(config.files.scss.src)
-        .pipe($.sass({
-            sourceComments: 'map',
-            sourceMap: 'sass'
-        }))
-        .pipe($.autoprefixer('last 2 versions'))
+        .pipe($.plumber())
+        .pipe($.sourcemaps.init())
+        .pipe($.sass())
+        // .pipe($.autoprefixer('last 2 versions'))
+        .pipe($.sourcemaps.write())
         .pipe(gulp.dest(config.app))
         .pipe(reload({
             stream: true
@@ -147,7 +147,6 @@ gulp.task('test', function(done) {
 
 gulp.task('default', [
     'browser-sync',
-    'convert',
     'scss-dev',
     'watch'
 ]);
