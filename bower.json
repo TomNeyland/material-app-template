@@ -22,6 +22,7 @@
     "angular-loading-bar": "https://github.com/paradox41/angular-loading-bar.git#~0.6.0",
     "angular-ui-router": "~0.2.10",
     "bootstrap-sass-official": "~3.2.0",
+    "bootswatch-scss": "master",
     "font-awesome": "~4.1.0",
     "lodash": "~2.4.1",
     "requirejs": "~2.1.14",
