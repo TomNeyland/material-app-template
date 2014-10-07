@@ -22,6 +22,12 @@ var config = {
         url: 'http://localhost:'
     },
 
+    html: {
+        files: [
+            'app/**/*.html'
+        ]
+    },
+
     js: {
         files: [
             'gulpfile.js',
@@ -150,7 +156,7 @@ gulp.task('test', function(done) {
 gulp.task('uncss', function() {
     return gulp.src(config.scss.devDest)
         .pipe($.uncss({
-            html: glob.sync()
+            html: glob.sync(config.html.files)
         }))
         .pipe(gulp.dest(config.app));
 });
