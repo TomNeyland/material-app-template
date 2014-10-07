@@ -31,6 +31,7 @@
     "gulp-sass": "^1.0.0",
     "gulp-sourcemaps": "^1.2.2",
     "gulp-tag-version": "^1.1.0",
+    "gulp-uncss": "^0.5.0",
     "gulp-watch": "^1.0.7",
     "jshint-stylish": "^0.4.0",
     "karma": "^0.12.24",
