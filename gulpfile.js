@@ -115,10 +115,23 @@ gulp.task('scss-dev', function(cb) {
     gulp.src(config.scss.src)
         .pipe($.plumber())
         .pipe($.sourcemaps.init())
-        .pipe($.sass())
-        // .pipe($.autoprefixer('last 2 versions'))
-        .pipe($.sourcemaps.write())
+        .pipe($.sass({
+            errLogToConsole: true
+        }))
+        .pipe($.sourcemaps.write({
+            includeContent: false,
+            sourceRoot: '.'
+        }))
+        .pipe($.sourcemaps.init({
+            loadMaps: true
+        }))
+        .pipe($.autoprefixer())
+        .pipe($.sourcemaps.write('.', {
+            includeContent: false,
+            sourceRoot: '.'
+        }))
         .pipe(gulp.dest(config.app))
+        .pipe($.filter(config.app + '/*.css'))
         .pipe(reload({
             stream: true
         }));
