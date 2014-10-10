@@ -4,14 +4,15 @@
 var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
 var tagVersion = require('gulp-tag-version');
+var minifyCSS = require('gulp-minify-css');
 
 var karma = require('karma').server;
 
-var serveStatic = require('serve-static');
 var browserSync = require('browser-sync');
 var reload = browserSync.reload;
 
 var glob = require('glob');
+var runSequence = require('run-sequence');
 
 var config = {
     app: 'app',
@@ -71,19 +72,6 @@ gulp.task('jshint', function() {
         .pipe($.jshint.reporter('jshint-stylish'));
 });
 
-gulp.task('connect', function() {
-    var connect = require('connect');
-    var serveStatic = require('serve-static');
-    var app = connect()
-        .use(serveStatic(config.app));
-
-    require('http').createServer(app)
-        .listen(config.server.port)
-        .on('listening', function() {
-            console.log('Started connect web server on ' + config.server.url + config.server.port);
-        });
-});
-
 gulp.task('browser-sync', function() {
     browserSync({
         server: {
@@ -138,7 +126,26 @@ gulp.task('scss-dev', function(cb) {
     cb();
 });
 
-gulp.task('watch', ['scss-dev'], function() {
+gulp.task('scss-build', function() {
+    return gulp.src(config.scss.src)
+        .pipe($.sass())
+        .pipe($.autoprefixer())
+        .pipe($.uncss({
+            html: glob.sync('app/**/*.html')
+        }))
+        .pipe(minifyCSS({
+            keepSpecialComments: 0
+        }))
+        .pipe(gulp.dest(config.build));
+});
+
+gulp.task('uglify', function() {
+    return gulp.src(config.build + '/app.js')
+        .pipe($.uglify())
+        .pipe(gulp.dest(config.build));
+});
+
+gulp.task('watch', function() {
     $.watch(config.scss.files, function(files, cb) {
         gulp.start('scss-dev', cb);
     });
@@ -146,17 +153,16 @@ gulp.task('watch', ['scss-dev'], function() {
 
 gulp.task('requirejs', function() {
     $.requirejs({
-            mainConfigFile: config.app + '/config.js',
-            baseUrl: config.app,
-            name: 'app',
-            out: 'app.js',
-            useStrict: true,
-            optimizeCss: 'none',
-            generateSourceMaps: false,
-            optimize: 'uglify2',
-            preserveLicenseComments: true
-        })
-        .pipe(gulp.dest(config.build));
+        mainConfigFile: config.app + '/config.js',
+        baseUrl: config.app,
+        name: 'app',
+        out: 'app.js',
+        useStrict: true,
+        optimizeCss: 'none',
+        generateSourceMaps: false,
+        optimize: 'uglify2',
+        preserveLicenseComments: true
+    }).pipe(gulp.dest(config.build));
 });
 
 gulp.task('test', function(done) {
@@ -180,7 +186,9 @@ gulp.task('default', [
     'watch'
 ]);
 
-gulp.task('build', []);
+gulp.task('build', function() {
+    runSequence('clean', 'requirejs', 'uglify', ['scss-build']);
+});
 
 gulp.task('patch', ['build'], function() {
     return release('patch');
