@@ -1,5 +1,6 @@
 /* global __dirname */
 'use strict';
+var fs = require('fs');
 
 var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
@@ -13,6 +14,7 @@ var reload = browserSync.reload;
 
 var glob = require('glob');
 var runSequence = require('run-sequence');
+var changelog = require('conventional-changelog');
 
 var config = {
     app: 'app',
@@ -49,7 +51,7 @@ var config = {
 };
 
 var release = function(importance) {
-    gulp.src(['./bower.json', './package.json'])
+    return gulp.src(['./bower.json', './package.json'])
         .pipe($.bump({
             type: importance
         }))
@@ -59,10 +61,42 @@ var release = function(importance) {
         .pipe(tagVersion());
 };
 
+gulp.task('changelog', ['build'], function(done) {
+    function changeParsed(err, log) {
+        if (err) {
+            return done(err);
+        }
+        fs.writeFile('CHANGELOG.md', log, done);
+    }
+    fs.readFile('./package.json', 'utf8', function(err, data) {
+        var ref$ = JSON.parse(data);
+        var repository = ref$.repository;
+        var version = ref$.version;
+
+        changelog({
+            repository: repository.url,
+            version: version
+        }, changeParsed);
+    });
+});
+
 gulp.task('clean', function(cb) {
     require('del')([config.build], {
         force: true
     }, cb);
+});
+
+gulp.task('convert', function() {
+    return gulp.src(config.app + 'bower_components/**/*.css')
+        .pipe($.rename({
+            extname: '.copy.scss'
+        }))
+        .pipe(gulp.dest(config.app + 'bower_components/'));
+});
+
+gulp.task('copy', function() {
+    gulp.src(config.appDir + '**/*.html')
+        .pipe(gulp.dest(config.build));
 });
 
 gulp.task('jshint', function() {
@@ -72,31 +106,40 @@ gulp.task('jshint', function() {
         .pipe($.jshint.reporter('jshint-stylish'));
 });
 
-gulp.task('browser-sync', function() {
-    browserSync({
-        server: {
-            baseDir: './app'
-        }
-    });
-});
-
-gulp.task('copy', function() {
-    gulp.src(config.appDir + '**/*.html')
-        .pipe(gulp.dest(config.build));
-});
-
 gulp.task('open', function() {
     var url = config.server.url + config.server.port;
 
     require('opn')(url);
 });
 
-gulp.task('convert', function() {
-    return gulp.src(config.app + 'bower_components/**/*.css')
-        .pipe($.rename({
-            extname: '.copy.scss'
-        }))
-        .pipe(gulp.dest(config.app + 'bower_components/'));
+gulp.task('requirejs', function() {
+    $.requirejs({
+            mainConfigFile: config.app + '/config.js',
+            baseUrl: config.app,
+            name: 'app',
+            out: 'app.js',
+            useStrict: true,
+            optimizeCss: 'none',
+            generateSourceMaps: false,
+            preserveLicenseComments: true
+        })
+        .pipe($.uglify())
+        .pipe(gulp.dest(config.build));
+});
+
+gulp.task('serve', function() {
+    browserSync({
+        server: {
+            baseDir: './app'
+        }
+    });
+
+    gulp.watch([
+        '**/*.scss',
+        '!bower_components/**'
+    ], {
+        cwd: 'app'
+    }, ['scss-dev']);
 });
 
 gulp.task('scss-dev', function(cb) {
@@ -139,32 +182,6 @@ gulp.task('scss-build', function() {
         .pipe(gulp.dest(config.build));
 });
 
-gulp.task('uglify', function() {
-    return gulp.src(config.build + '/app.js')
-        .pipe($.uglify())
-        .pipe(gulp.dest(config.build));
-});
-
-gulp.task('watch', function() {
-    $.watch(config.scss.files, function(files, cb) {
-        gulp.start('scss-dev', cb);
-    });
-});
-
-gulp.task('requirejs', function() {
-    $.requirejs({
-        mainConfigFile: config.app + '/config.js',
-        baseUrl: config.app,
-        name: 'app',
-        out: 'app.js',
-        useStrict: true,
-        optimizeCss: 'none',
-        generateSourceMaps: false,
-        optimize: 'uglify2',
-        preserveLicenseComments: true
-    }).pipe(gulp.dest(config.build));
-});
-
 gulp.task('test', function(done) {
     karma.start({
         configFile: __dirname + '/karma.conf.js',
@@ -180,14 +197,20 @@ gulp.task('uncss', function() {
         .pipe(gulp.dest(config.app));
 });
 
+// gulp.task('watch', function() {
+//     $.watch(config.scss.files, function(files, cb) {
+//         gulp.start('scss-dev', cb);
+//     });
+// });
+
 gulp.task('default', [
-    'browser-sync',
-    'scss-dev',
-    'watch'
+    'serve',
+    'scss-dev'
+    // 'watch'
 ]);
 
 gulp.task('build', function() {
-    runSequence('clean', 'requirejs', 'uglify', ['scss-build']);
+    runSequence('test', 'clean', 'requirejs', ['scss-build']);
 });
 
 gulp.task('patch', ['build'], function() {
