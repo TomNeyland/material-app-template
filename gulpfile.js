@@ -61,7 +61,7 @@ var release = function(importance) {
         .pipe(tagVersion());
 };
 
-gulp.task('changelog', ['build'], function(done) {
+gulp.task('changelog', function(done) {
     function changeParsed(err, log) {
         if (err) {
             return done(err);
@@ -106,11 +106,11 @@ gulp.task('jshint', function() {
         .pipe($.jshint.reporter('jshint-stylish'));
 });
 
-gulp.task('open', function() {
-    var url = config.server.url + config.server.port;
+// gulp.task('open', function() {
+//     var url = config.server.url + config.server.port;
 
-    require('opn')(url);
-});
+//     require('opn')(url);
+// });
 
 gulp.task('requirejs', function() {
     $.requirejs({
@@ -197,16 +197,9 @@ gulp.task('uncss', function() {
         .pipe(gulp.dest(config.app));
 });
 
-// gulp.task('watch', function() {
-//     $.watch(config.scss.files, function(files, cb) {
-//         gulp.start('scss-dev', cb);
-//     });
-// });
-
 gulp.task('default', [
     'serve',
     'scss-dev'
-    // 'watch'
 ]);
 
 gulp.task('build', function() {
