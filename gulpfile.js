@@ -203,7 +203,7 @@ gulp.task('default', [
 ]);
 
 gulp.task('build', function() {
-    runSequence('test', 'clean', 'requirejs', ['scss-build']);
+    runSequence('test', 'clean', 'requirejs', ['scss-build'], 'changelog');
 });
 
 gulp.task('patch', ['build'], function() {
