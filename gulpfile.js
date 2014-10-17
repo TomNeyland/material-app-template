@@ -6,6 +6,7 @@ var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
 var tagVersion = require('gulp-tag-version');
 var minifyCSS = require('gulp-minify-css');
+var rjs = require('requirejs');
 
 var karma = require('karma').server;
 
@@ -107,19 +108,22 @@ gulp.task('jshint', function() {
         .pipe($.jshint.reporter('jshint-stylish'));
 });
 
-// gulp.task('requirejs', function() {
-//     $.requirejs({
-//         mainConfigFile: config.app + '/config.js',
-//         baseUrl: config.app,
-//         name: 'app',
-//         out: 'app.js',
-//         useStrict: true,
-//         optimizeCss: 'none',
-//         generateSourceMaps: false,
-//         preserveLicenseComments: true
-//     }).pipe($.uglify())
-//     .pipe(gulp.dest(config.build));
-// });
+// https://github.com/phated/requirejs-example-gulpfile/blob/master/gulpfile.js
+gulp.task('rjs', function(cb) {
+    rjs.optimize({
+        mainConfigFile: config.app + '/config.js',
+        baseUrl: config.app,
+        name: 'app',
+        out: 'app.js',
+        useStrict: true,
+        optimizeCss: 'none',
+        generateSourceMaps: false,
+        preserveLicenseComments: true
+    }, function(buildResponse) {
+        console.log('build response', buildResponse);
+        cb();
+    }, cb);
+});
 
 gulp.task('serve', function() {
     browserSync({
