@@ -107,20 +107,19 @@ gulp.task('jshint', function() {
         .pipe($.jshint.reporter('jshint-stylish'));
 });
 
-gulp.task('requirejs', function() {
-    $.requirejs({
-            mainConfigFile: config.app + '/config.js',
-            baseUrl: config.app,
-            name: 'app',
-            out: 'app.js',
-            useStrict: true,
-            optimizeCss: 'none',
-            generateSourceMaps: false,
-            preserveLicenseComments: true
-        })
-        .pipe($.uglify())
-        .pipe(gulp.dest(config.build));
-});
+// gulp.task('requirejs', function() {
+//     $.requirejs({
+//         mainConfigFile: config.app + '/config.js',
+//         baseUrl: config.app,
+//         name: 'app',
+//         out: 'app.js',
+//         useStrict: true,
+//         optimizeCss: 'none',
+//         generateSourceMaps: false,
+//         preserveLicenseComments: true
+//     }).pipe($.uglify())
+//     .pipe(gulp.dest(config.build));
+// });
 
 gulp.task('serve', function() {
     browserSync({
