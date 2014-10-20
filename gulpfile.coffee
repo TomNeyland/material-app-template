@@ -10,7 +10,7 @@ tagVersion = require 'gulp-tag-version'
 minifyCSS = require 'gulp-minify-css'
 
 rjs = require 'requirejs'
-karma = require('karma').serve
+karma = require('karma').server
 browserSync = require 'browser-sync'
 reload = browserSync.reload
 
@@ -97,7 +97,7 @@ gulp.task 'rjs', (cb) ->
         mainConfigFile: config.app + '/config.js',
         baseUrl: config.app,
         name: 'app',
-        out: 'app.js',
+        out: config.build + '/app.js',
         useStrict: true,
         optimizeCss: 'none',
         generateSourceMaps: false,
@@ -152,11 +152,12 @@ gulp.task 'scss-build', () ->
         .pipe(minifyCSS(keepSpecialComments: 0))
         .pipe(gulp.dest(config.build))
 
-gulp.task 'test', (done) ->
-    karma.start(
-        configFile: __dirname + '/karma.conf.js'
-        singleRun: true
-    , done)
+gulp.task "test", (done) ->
+  karma.start
+    configFile: __dirname + "/karma.conf.js"
+    singleRun: true
+  , done
+  return
 
 
 gulp.task 'uncss', () ->
@@ -170,7 +171,7 @@ gulp.task 'default', () ->
 
 
 gulp.task 'build', () ->
-    runSequence('test', 'clean', 'requirejs', ['scss-build'], 'changelog')
+    runSequence('test', 'clean', 'rjs', ['scss-build'], 'changelog')
 
 gulp.task 'patch', ['build'], ->
     release 'patch'
