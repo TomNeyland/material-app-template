@@ -5,6 +5,7 @@ fs = require 'fs'
 gulp = require 'gulp'
 $ = require('gulp-load-plugins')()
 coffee = require 'gulp-coffee'
+to5 = require 'gulp-6to5'
 
 tagVersion = require 'gulp-tag-version'
 minifyCSS = require 'gulp-minify-css'
@@ -49,6 +50,20 @@ release = (importance) ->
         .pipe($.git.commit('bumps package version'))
         .pipe($.filter('bower.json'))
         .pipe tagVersion()
+
+
+gulp.task '6to5', () ->
+    return gulp.src(config.app + '/**/*.es6.js')
+        .pipe($.debug(verbose: true))
+        .pipe($.sourcemaps.init())
+        .pipe($.rename((path) ->
+            path.basename = path.basename.split('.').shift()
+            path.extname = '.js'
+            return
+        ))
+        .pipe(to5())
+        .pipe($.sourcemaps.write())
+        .pipe(gulp.dest(config.app + '/'))
 
 
 gulp.task 'changelog', (done) ->
@@ -110,19 +125,6 @@ gulp.task 'rjs', (cb) ->
     return
 
 
-gulp.task 'serve', () ->
-    browserSync
-        server:
-            baseDir: './app'
-
-    gulp.watch([
-        '**/*.scss',
-        '!bower_components/**'
-    ],
-        cwd: 'app',
-    ['scss-dev'])
-
-
 gulp.task 'scss-dev', (cb) ->
     gulp.src(config.scss.src)
         .pipe($.plumber())
@@ -152,9 +154,23 @@ gulp.task 'scss-build', () ->
         .pipe(minifyCSS(keepSpecialComments: 0))
         .pipe(gulp.dest(config.build))
 
-gulp.task "test", (done) ->
+
+gulp.task 'serve', () ->
+    browserSync
+        server:
+            baseDir: './app'
+
+    gulp.watch([
+        '**/*.scss',
+        '!bower_components/**'
+    ],
+        cwd: 'app',
+    ['scss-dev'])
+
+
+gulp.task 'test', (done) ->
   karma.start
-    configFile: __dirname + "/karma.conf.js"
+    configFile: __dirname + '/karma.conf.js'
     singleRun: true
   , done
   return

@@ -9,7 +9,8 @@
     "smarttabs": true,
     "trailing": true,
     "undef": true,
-    "unused": false,
+    "unused": true,
+    "esnext": true,
     "globals": {
         "browser": true,
         "document": true,
