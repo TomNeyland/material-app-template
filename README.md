@@ -126,3 +126,7 @@ A typical module will look something like this:
 - Top level modules should import all of their submodules.
 - `app.js` should only import top level modules.
 - `r.js` is used to build all the JavaScript into one file.
+
+### Commit Conventions
+
+Follow [conventional changelog](https://github.com/ajoslin/conventional-changelog/blob/master/CONVENTIONS.md)
