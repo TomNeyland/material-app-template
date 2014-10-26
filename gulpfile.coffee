@@ -33,6 +33,7 @@ config.js = files: [
     '!app/bower_components/**/*.js'
     '!app/templates.js'
 ]
+config.es6 = files: ['app/**/*.es6.js']
 config.scss =
     files: [
         'app/**/*.scss'
@@ -53,15 +54,14 @@ release = (importance) ->
 
 
 gulp.task '6to5', () ->
-    return gulp.src(config.app + '/**/*.es6.js')
-        .pipe($.debug(verbose: true))
+    return gulp.src(config.es6.files)
         .pipe($.sourcemaps.init())
         .pipe($.rename((path) ->
             path.basename = path.basename.split('.').shift()
             path.extname = '.js'
             return
         ))
-        .pipe(to5())
+        .pipe(to5(modules: 'amd'))
         .pipe($.sourcemaps.write())
         .pipe(gulp.dest(config.app + '/'))
 
@@ -182,6 +182,10 @@ gulp.task 'uncss', () ->
         .pipe(gulp.dest(config.app))
 
 
+gulp.task 'watch', () ->
+    gulp.watch(config.es6.files, ['6to5'])
+
+
 gulp.task 'default', () ->
     gulp.run 'serve', 'scss-dev'
 
@@ -189,11 +193,14 @@ gulp.task 'default', () ->
 gulp.task 'build', () ->
     runSequence('test', 'clean', 'rjs', ['scss-build'], 'changelog')
 
+
 gulp.task 'patch', ['build'], ->
     release 'patch'
 
+
 gulp.task 'feature', ['build'], ->
     release 'minor'
+
 
 gulp.task 'release', ['build'], ->
     release 'major'
