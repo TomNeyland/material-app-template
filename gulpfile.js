@@ -7,6 +7,7 @@ var $ = require('gulp-load-plugins')();
 var tagVersion = require('gulp-tag-version');
 var minifyCSS = require('gulp-minify-css');
 var rjs = require('requirejs');
+var to5 = require('gulp-6to5');
 
 var karma = require('karma').server;
 
@@ -42,6 +43,10 @@ config.js = {
     ]
 };
 
+config.es6 = {
+    files: ['app/**/*.es6.js']
+};
+
 config.scss = {
     files: [
         'app/**/*.scss',
@@ -62,6 +67,20 @@ var release = function(importance) {
         .pipe($.filter('bower.json'))
         .pipe(tagVersion());
 };
+
+gulp.task('6to5', function() {
+    return gulp.src(config.es6.files)
+        .pipe($.sourcemaps.init())
+        .pipe($.rename(function(path) {
+            path.basename = path.basename.split('.').shift();
+            path.extname = '.js';
+        }))
+        .pipe(to5({
+            modules: 'amd'
+        }))
+        .pipe($.sourcemaps.write())
+        .pipe(gulp.dest(config.app + '/'));
+});
 
 gulp.task('changelog', function(done) {
     function changeParsed(err, log) {
@@ -114,7 +133,7 @@ gulp.task('rjs', function(cb) {
         mainConfigFile: config.app + '/config.js',
         baseUrl: config.app,
         name: 'app',
-        out: 'app.js',
+        out: config.build + '/app.js',
         useStrict: true,
         optimizeCss: 'none',
         generateSourceMaps: false,
@@ -199,6 +218,10 @@ gulp.task('default', [
     'serve',
     'scss-dev'
 ]);
+
+gulp.task('watch',function() {
+    gulp.watch(config.es6.files, ['6to5']);
+});
 
 gulp.task('build', function() {
     runSequence('test', 'clean', 'requirejs', ['scss-build'], 'changelog');
