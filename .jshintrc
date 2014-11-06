@@ -11,6 +11,8 @@
     "undef": true,
     "unused": true,
     "esnext": true,
+    "latedef": "nofunc",
+    "quotmark": "single",
     "globals": {
         "browser": true,
         "document": true,
