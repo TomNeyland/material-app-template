@@ -23,11 +23,6 @@ var config = {};
 config.app = 'app';
 config.build = 'build';
 
-config.server = {
-    port: 3000,
-    url: 'http://localhost:'
-};
-
 config.html = {
     files: [
         'app/**/*.html'
