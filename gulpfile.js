@@ -77,6 +77,20 @@ gulp.task('6to5', function() {
         .pipe(gulp.dest(config.app + '/'));
 });
 
+gulp.task('cachebust', function() {
+    return gulp.src([
+            'build/app.css',
+            'build/app.js'
+        ], {
+            base: 'app'
+        })
+        .pipe(gulp.dest(config.build))
+        .pipe($.rev())
+        .pipe(gulp.dest(config.build))
+        .pipe($.rev.manifest())
+        .pipe(gulp.dest(config.build));
+});
+
 gulp.task('changelog', function(done) {
     function changeParsed(err, log) {
         if (err) {
@@ -214,12 +228,12 @@ gulp.task('default', [
     'scss-dev'
 ]);
 
-gulp.task('watch',function() {
+gulp.task('watch', function() {
     gulp.watch(config.es6.files, ['6to5']);
 });
 
 gulp.task('build', function() {
-    runSequence('test', 'clean', 'requirejs', ['scss-build'], 'changelog');
+    runSequence('test', 'clean', 'rjs', ['scss-build'], 'cachebust', 'changelog');
 });
 
 gulp.task('patch', ['build'], function() {
