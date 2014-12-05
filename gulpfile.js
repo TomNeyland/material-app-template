@@ -4,10 +4,9 @@ var fs = require('fs');
 
 var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
+var gutil = require('gulp-util');
 var tagVersion = require('gulp-tag-version');
 var minifyCSS = require('gulp-minify-css');
-var rjs = require('requirejs');
-var to5 = require('gulp-6to5');
 
 var karma = require('karma').server;
 
@@ -17,6 +16,15 @@ var reload = browserSync.reload;
 var glob = require('glob');
 var runSequence = require('run-sequence');
 var changelog = require('conventional-changelog');
+
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
+
+var watchify = require('watchify');
+var browserify = require('browserify');
+
+// transforms
+var to5Browserify = require('6to5-browserify');
 
 var config = {};
 
@@ -36,10 +44,6 @@ config.js = {
         '!app/bower_components/**/*.js',
         '!app/templates.js'
     ]
-};
-
-config.es6 = {
-    files: ['app/**/*.es6.js']
 };
 
 config.scss = {
@@ -63,18 +67,34 @@ var release = function(importance) {
         .pipe(tagVersion());
 };
 
-gulp.task('6to5', function() {
-    return gulp.src(config.es6.files)
-        .pipe($.sourcemaps.init())
-        .pipe($.rename(function(path) {
-            path.basename = path.basename.split('.').shift();
-            path.extname = '.js';
-        }))
-        .pipe(to5({
-            modules: 'amd'
-        }))
-        .pipe($.sourcemaps.write())
-        .pipe(gulp.dest(config.app + '/'));
+gulp.task('browserify', function() {
+    var bundler = watchify(browserify({
+        entries: ['./app/app.js'],
+        debug: true,
+        insertGlobals: true
+    }));
+
+    bundler.transform(to5Browserify);
+    bundler.on('error', gutil.log.bind(gutil, 'Browserify Error'));
+
+    bundler.on('update', rebundle);
+
+    function rebundle() {
+        return bundler.bundle()
+            .pipe($.plumber())
+            .on('error', gutil.log.bind(gutil, 'Browserify Error'))
+            .pipe(source('app.min.js'))
+            .pipe(buffer())
+            .pipe($.sourcemaps.init({
+                loadMaps: true
+            }))
+            // Add transformation tasks to the pipeline here.
+            // .pipe($.uglify())
+            .pipe($.sourcemaps.write('./'))
+            .pipe(gulp.dest(config.app));
+    }
+
+    return rebundle();
 });
 
 gulp.task('cachebust', function() {
@@ -134,23 +154,6 @@ gulp.task('jshint', function() {
         .pipe($.plumber())
         .pipe($.jshint())
         .pipe($.jshint.reporter('jshint-stylish'));
-});
-
-// https://github.com/phated/requirejs-example-gulpfile/blob/master/gulpfile.js
-gulp.task('rjs', function(cb) {
-    rjs.optimize({
-        mainConfigFile: config.app + '/config.js',
-        baseUrl: config.app,
-        name: 'app',
-        out: config.build + '/app.js',
-        useStrict: true,
-        optimizeCss: 'none',
-        generateSourceMaps: false,
-        preserveLicenseComments: true
-    }, function(buildResponse) {
-        console.log('build response', buildResponse);
-        cb();
-    }, cb);
 });
 
 gulp.task('serve', function() {
@@ -225,15 +228,16 @@ gulp.task('uncss', function() {
 
 gulp.task('default', [
     'serve',
-    'scss-dev'
+    'scss-dev',
+    'watch'
 ]);
 
 gulp.task('watch', function() {
-    gulp.watch(config.es6.files, ['6to5']);
+    gulp.watch(config.js.files, ['browserify']);
 });
 
 gulp.task('build', function() {
-    runSequence('test', 'clean', 'rjs', ['scss-build'], 'cachebust', 'changelog');
+    runSequence('test', 'clean', ['scss-build'], 'cachebust', 'changelog');
 });
 
 gulp.task('patch', ['build'], function() {
