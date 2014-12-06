@@ -1,59 +1,43 @@
-(function() {
-    'use strict';
+'use strict';
 
-    var moduleName = 'app',
+// angular
+import * as angular from 'angular';
+import 'angular-ui-router';
 
-        angularDependencies = [
-            'ui.router',
-            'ngAnimate',
-            'chieffancypants.loadingBar',
-        ];
+var MODULE_NAME = 'app';
 
-    define([
-        'require',
-        'angular',
-        'lodash',
-        'ui.router',
-        'angular-animate',
-        'angular-loading-bar'
-    ], function(require, angular, _) {
+angular.module(MODULE_NAME, [
+    'ui.router'
+])
 
-        var module = angular.module(moduleName, angularDependencies);
+.config([
+    '$stateProvider',
+    '$urlRouterProvider',
+    '$httpProvider',
+    AppStateConfig
+])
 
-        module.config(['$stateProvider', '$urlRouterProvider', 'cfpLoadingBarProvider',
-            function($stateProvider, $urlRouteProvider, cfpLoadingBarProvider) {
+.constant('version', require('../package.json').version)
 
-                $urlRouteProvider.otherwise('');
+.run(['$rootScope', '$state', '$stateParams',
+    function($rootScope, $state, $stateParams) {
+        $rootScope.$state = $state;
+        $rootScope.$stateParams = $stateParams;
 
-                $stateProvider.state('app', {
-                    url: '',
-                    abstract: true,
-                    template: '<div ui-view></div>'
-                });
-            }
-        ]);
+        $rootScope.$on('$routeChangeError', function() {
+            console.log('failed to change routes', arguments);
+        });
+    }
+]);
 
-        module.run(['$rootScope', '$state', '$stateParams',
-            function($rootScope, $state, $stateParams) {
-                $rootScope.$state = $state;
-                $rootScope.$stateParams = $stateParams;
+function AppStateConfig($stateProvider, $urlRouterProvider) {
+    $urlRouterProvider.otherwise('');
 
-                $rootScope.$on('$routeChangeError', function() {
-                    console.log('failed to change routes', arguments);
-                });
-
-                $rootScope.$on('$stateChangeError', function(event, toState, toParams, fromState, fromParams, error) {
-                    console.log('failed to change state', arguments);
-                });
-
-                $rootScope.$on('$stateNotFound', function(event, unfoundState, fromState, fromParams) {
-                    console.log('state not found', arguments);
-                });
-            }
-        ]);
-
-        angular.bootstrap(document.querySelector('html'), [moduleName]);
-
-        return module;
+    $stateProvider.state('app', {
+        url: '',
+        abstract: true,
+        template: '<div ui-view></div>'
     });
-})();
+}
+
+angular.bootstrap(document.querySelector('html'), [MODULE_NAME]);
