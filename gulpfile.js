@@ -5,6 +5,8 @@ var fs = require('fs');
 var gulp = require('gulp');
 var $ = require('gulp-load-plugins')();
 var gutil = require('gulp-util');
+
+var handlebars = require('gulp-compile-handlebars');
 var tagVersion = require('gulp-tag-version');
 var minifyCSS = require('gulp-minify-css');
 
@@ -65,6 +67,14 @@ var release = function(importance) {
         .pipe($.git.commit('bumps package version'))
         .pipe($.filter('bower.json'))
         .pipe(tagVersion());
+};
+
+var handlebarOpts = {
+    helpers: {
+        assetPath: function(path, context) {
+            return [context.data.root[path]].join('/');
+        }
+    }
 };
 
 gulp.task('browserify', function() {
@@ -147,6 +157,27 @@ gulp.task('convert', function() {
 gulp.task('copy', function() {
     gulp.src(config.appDir + '**/*.html')
         .pipe(gulp.dest(config.build));
+});
+
+gulp.task('handlebars:build', function() {
+    // read in our manifest file
+    var manifest = JSON.parse(fs.readFileSync(config.build + '/rev-manifest.json', 'utf8'));
+
+    // read in our handlebars template, compile it using
+    // our manifest, and output it to index.html
+    return gulp.src(config.build + '/index.hbs')
+        .pipe(handlebars(manifest, handlebarOpts))
+        .pipe($.rename(config.build + '/index.html'))
+        .pipe(gulp.dest('./'));
+});
+
+gulp.task('handlebars:dev', function() {
+    var manifest = JSON.parse(fs.readFileSync(config.app + '/rev-manifest.json', 'utf8'));
+
+    return gulp.src(config.app + '/index.hbs')
+        .pipe(handlebars(manifest, handlebarOpts))
+        .pipe($.rename(config.app + '/index.html'))
+        .pipe(gulp.dest('./'));
 });
 
 gulp.task('jshint', function() {
