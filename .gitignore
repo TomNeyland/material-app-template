@@ -4,6 +4,7 @@
 *.pyc
 *.css
 *.map
+*.min.js
 .DS_Store
 .project
 .pydevproject
