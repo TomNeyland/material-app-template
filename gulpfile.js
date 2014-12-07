@@ -44,7 +44,8 @@ config.js = {
         'gulpfile.js',
         'app/**/*.js',
         '!app/bower_components/**/*.js',
-        '!app/templates.js'
+        '!app/templates.js',
+        '!app/app.min.js'
     ]
 };
 
@@ -190,7 +191,7 @@ gulp.task('jshint', function() {
 gulp.task('serve', function() {
     browserSync({
         server: {
-            baseDir: './app'
+            baseDir: config.app
         }
     });
 
@@ -198,7 +199,7 @@ gulp.task('serve', function() {
         '**/*.scss',
         '!bower_components/**'
     ], {
-        cwd: 'app'
+        cwd: config.app
     }, ['scss-dev']);
 });
 
@@ -258,6 +259,8 @@ gulp.task('uncss', function() {
 });
 
 gulp.task('default', [
+    'browserify',
+    'handlebars:dev',
     'serve',
     'scss-dev',
     'watch'
