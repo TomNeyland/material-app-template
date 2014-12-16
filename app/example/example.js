@@ -1,49 +1,26 @@
-(function() {
-    'use strict';
+import * as _ from 'lodash';
 
-    var moduleName = 'example',
+class ExampleCtrl {
+    constructor(data) {
+        this.exampleData = data;
+    }
 
-        angularDependencies = [
-            'ui.router'
-        ];
+    someMethod() {
+        return 'foo';
+    }
 
-    define([
-        'require',
-        'angular',
-        'lodash',
-        './models/example',
-        'ui.router'
-    ], function(require, angular, _, Example) {
+    get data() {
+        return this.exampleData;
+    }
+}
 
-        var module = angular.module(moduleName, angularDependencies);
-
-        module.config(['$stateProvider',
-            function($stateProvider) {
-
-                $stateProvider.state('app.example', {
-                    controller: 'ExampleCtrl',
-                    controllerAs: 'Example',
-                    url: '/example',
-                    templateUrl: require.toUrl('./_example.html'),
-                    resolve: {
-                        data: ['$http', function($http) {
-                            return $http.get('/some/route');
-                        }]
-                    }
-                });
-            }
-        ]);
-
-        module.controller('ExampleCtrl', ['data', ExampleCtrl]);
-
-        function ExampleCtrl(data) {
-            this.exampleData = new Example(data);
-        }
-
-        ExampleCtrl.prototype.someMethod = function() {
-            return 'foo';
-        };
-
-        return module;
+function ExampleState($stateProvider) {
+    $stateProvider.state('app.example', {
+        controller: ExampleCtrl,
+        controllerAs: 'Example',
+        url: '/example',
+        templateUrl: '/example/_example.html'
     });
-})();
+}
+
+export default ['$stateProvider', ExampleState];
