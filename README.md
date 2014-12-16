@@ -70,62 +70,33 @@ and the HTML partial and the JavaScript file should be placed together in that f
 A typical module will look something like this:
 
 ```javascript
-(function() {
-    'use strict';
+import * as _ from 'lodash';
 
-    var moduleName = 'foo',
+class ExampleCtrl {
+    constructor(data) {
+        this.exampleData = data;
+    }
 
-        angularDependencies = [
-            'ui.router',
-            'foo.services',
-            'foo.directives',
-            'common.filters'
-        ];
+    someMethod() {
+        return 'foo';
+    }
 
-    define([
-        'require',
-        'angular',
-        'lodash',
-        'ui.router',
-        './services',
-        './directives',
-        'common/filters'
-    ], function(require, angular, _) {
+    get data() {
+        return this.exampleData;
+    }
+}
 
-        var module = angular.module(moduleName, angularDependencies);
-
-        module.config(['$stateProvider',
-            function($stateProvider) {
-
-                $stateProvider.state('app.foo', {
-                    url: '/foo',
-                    controller: 'FooCtrl'
-                    templateUrl: require.toUrl('./_foo.html')
-                });
-            }
-        ]);
-
-        module.controller('FooCtrl', ['$scope', 'items', 'otherItems',
-            function($scope, items, otherItems) {
-                $scope.items = items;
-                $scope.otherItems = otherItems;
-
-                $scope.doSomething = function() {
-                    // stuff
-                };
-            }
-        ]);
-
-        return module;
+function ExampleState($stateProvider) {
+    $stateProvider.state('app.example', {
+        controller: ExampleCtrl,
+        controllerAs: 'Example',
+        url: '/example',
+        templateUrl: require.toUrl('./_example.html')
     });
-})();
-```
+}
 
-- Modules are wrapped in IIFEs.
-- `require.js` is used to generate urls to the templates, so you don't have to.
-- Top level modules should import all of their submodules.
-- `app.js` should only import top level modules.
-- `r.js` is used to build all the JavaScript into one file.
+export default ['$stateProvider', ExampleState];
+```
 
 ### Commit Conventions
 
