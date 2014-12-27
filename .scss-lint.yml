@@ -1,0 +1,116 @@
+# https://github.com/causes/scss-lint/blob/master/lib/scss_lint/linter/README.md
+exclude: 'app/bower_components/*'
+
+linters:
+  BorderZero:
+          d: true
+
+  Indentation:
+    enabled: true
+    width: 4
+
+  CapitalizationInSelector:
+    enabled: true
+
+  ColorKeyword:
+    enabled: true
+
+  Comment:
+    enabled: true
+
+  DeclarationOrder:
+    enabled: true
+
+  DuplicateProperty:
+    enabled: true
+
+  EmptyLineBetweenBlocks:
+    enabled: true
+    ignore_single_line_blocks: false
+
+  EmptyRule:
+    enabled: true
+
+  FinalNewline:
+    enabled: true
+
+  HexLength:
+    enabled: true
+    style: long
+
+  HexNotation:
+    enabled: true
+    style: uppercase
+
+  HexValidation:
+    enabled: true
+
+  MergeableSelector:
+    enabled: true
+
+  NameFormat:
+    enabled: true
+
+  # We should change this to true eventually
+  PlaceholderInExtend:
+    enabled: false
+
+  # We have autoprefixer, so this doesn't matter
+  PropertySortOrder:
+    enabled: false
+
+  PropertySpelling:
+    enabled: true
+
+  # Nothing > 3
+  SelectorDepth:
+    enabled: true
+    max_depth: 4
+
+  Shorthand:
+    enabled: true
+
+  SingleLinePerSelector:
+    enabled: true
+
+  # https://github.com/causes/scss-lint/blob/master/lib/scss_lint/linter/README.md#spaceafterpropertycolon
+  SpaceAfterComma:
+    enabled: true
+
+  # https://github.com/causes/scss-lint/blob/master/lib/scss_lint/linter/README.md#spaceafterpropertycolon
+  SpaceAfterPropertyColon:
+    enabled: true
+
+  # https://github.com/causes/scss-lint/blob/master/lib/scss_lint/linter/README.md#spaceafterpropertyname
+  SpaceAfterPropertyName:
+    enabled: true
+
+  # https://github.com/causes/scss-lint/blob/master/lib/scss_lint/linter/README.md#spacebeforebrace
+  SpaceBeforeBrace:
+    enabled: true
+
+  # https://github.com/causes/scss-lint/blob/master/lib/scss_lint/linter/README.md#spacebetweenparens
+  SpaceBetweenParens:
+    enabled: true
+
+  StringQuotes:
+    enabled: true
+
+  TrailingSemicolonAfterPropertyValue:
+    enabled: true
+
+  # Don't do the machine's work
+  UnnecessaryMantissa:
+    enabled: true
+
+  # URLs should not contain protocols or domain names.
+  UrlFormat:
+    enabled: true
+
+  # URLs should always be enclosed within quotes.
+  UrlQuotes:
+    enabled: true
+
+  # Omit length units on zero values.
+  ZeroUnit:
+    enabled: true
