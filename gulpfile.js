@@ -9,6 +9,7 @@ var gutil = require('gulp-util');
 var handlebars = require('gulp-compile-handlebars');
 var tagVersion = require('gulp-tag-version');
 var minifyCSS = require('gulp-minify-css');
+var scsslint = require('gulp-scss-lint');
 
 var karma = require('karma').server;
 
@@ -26,37 +27,39 @@ var watchify = require('watchify');
 var browserify = require('browserify');
 
 // transforms
-var to5Browserify = require('6to5-browserify');
+var to5ify = require('6to5ify');
+
+var APP_DIR = 'app';
+var BUILD_DIR = 'build';
 
 var config = {};
 
-config.app = 'app';
-config.build = 'build';
+config.app = APP_DIR;
+config.build = BUILD_DIR;
 
 config.html = {
     files: [
-        'app/**/*.html'
+        APP_DIR + '/**/*.html'
     ]
 };
 
 config.js = {
     files: [
-        'gulpfile.js',
-        'app/**/*.js',
-        '!app/bower_components/**/*.js',
-        '!app/templates.js',
-        '!app/app.min.js'
+        APP_DIR + '/**/*.js',
+        '!' + APP_DIR + '/bower_components/**/*.js',
+        '!' + APP_DIR + '/templates.js',
+        '!' + APP_DIR + '/app.min.js'
     ]
 };
 
 config.scss = {
     files: [
-        'app/**/*.scss',
-        '!app/bower_components/**/*.scss'
+        APP_DIR + '/**/*.scss',
+        '!' + APP_DIR + '/bower_components/**/*.scss'
     ],
-    src: 'app/app.scss',
-    devDest: 'app/app.css',
-    buildDest: 'build/app.css'
+    src: APP_DIR + '/app.scss',
+    devDest: APP_DIR + '/app.css',
+    buildDest: BUILD_DIR + '/app.css'
 };
 
 var release = function(importance) {
@@ -85,7 +88,7 @@ gulp.task('browserify', function() {
         insertGlobals: true
     }));
 
-    bundler.transform(to5Browserify);
+    bundler.transform(to5ify);
     bundler.on('error', gutil.log.bind(gutil, 'Browserify Error'));
 
     bundler.on('update', rebundle);
@@ -232,6 +235,9 @@ gulp.task('scss-dev', function(cb) {
 
 gulp.task('scss-build', function() {
     return gulp.src(config.scss.src)
+        .pipe(scsslint({
+            config: '.scss-lint.yml'
+        }))
         .pipe($.sass())
         .pipe($.autoprefixer())
         .pipe($.uncss({
@@ -248,14 +254,6 @@ gulp.task('test', function(done) {
         configFile: __dirname + '/karma.conf.js',
         singleRun: true
     }, done);
-});
-
-gulp.task('uncss', function() {
-    return gulp.src(config.scss.devDest)
-        .pipe($.uncss({
-            html: glob.sync(config.html.files)
-        }))
-        .pipe(gulp.dest(config.app));
 });
 
 gulp.task('default', [
