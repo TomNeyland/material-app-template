@@ -3,7 +3,7 @@ exclude: 'app/bower_components/*'
 
 linters:
   BorderZero:
-          d: true
+    enabled: true
 
   Indentation:
     enabled: true
