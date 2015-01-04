@@ -46,6 +46,7 @@ config.html = {
 config.js = {
     files: [
         APP_DIR + '/**/*.js',
+        '!' + APP_DIR + '/**/*.spec.js',
         '!' + APP_DIR + '/bower_components/**/*.js',
         '!' + APP_DIR + '/templates.js',
         '!' + APP_DIR + '/app.min.js'
@@ -251,8 +252,7 @@ gulp.task('scss-build', function() {
 
 gulp.task('test', function(done) {
     karma.start({
-        configFile: __dirname + '/karma.conf.js',
-        singleRun: true
+        configFile: __dirname + '/karma.conf.js'
     }, done);
 });
 
