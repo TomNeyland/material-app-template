@@ -1,10 +1,9 @@
 'use strict';
 
-// angular
 import * as angular from 'angular';
 import 'angular-ui-router';
 
-var MODULE_NAME = 'app';
+const MODULE_NAME = 'app';
 
 angular.module(MODULE_NAME, [
     'ui.router'
