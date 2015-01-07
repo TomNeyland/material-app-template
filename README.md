@@ -1,5 +1,6 @@
 # app template
 
+[![License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/paradox41/app-template)
 
 Boilerplate for my Angular apps
 
