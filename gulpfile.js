@@ -164,6 +164,18 @@ gulp.task('copy', function() {
         .pipe(gulp.dest(config.build));
 });
 
+gulp.task('enforce', function() {
+    var validateCommit = '.git/hooks/commit-msg';
+
+    if (!fs.existsSync(validateCommit)) {
+        // copy the file over
+        fs.createReadStream('./validate-commit-msg.js')
+        .pipe(fs.createWriteStream(validateCommit));
+        // make it executable
+        fs.chmodSync(validateCommit, '0755');
+    }
+});
+
 gulp.task('handlebars:build', function() {
     // read in our manifest file
     var manifest = JSON.parse(fs.readFileSync(config.build + '/rev-manifest.json', 'utf8'));
