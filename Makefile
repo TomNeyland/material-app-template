@@ -1,9 +1,13 @@
 
 dependencies:
 	npm cache clean
-	npm install
 	bower cache clean
+	npm install
 	bower install
+
+clean:
+	rm -rf node_modules/
+	rm -rf app/bower_components/
 
 build:
 	make dependencies
