@@ -49,7 +49,7 @@ config.js = {
         '!' + APP_DIR + '/**/*.spec.js',
         '!' + APP_DIR + '/bower_components/**/*.js',
         '!' + APP_DIR + '/templates.js',
-        '!' + APP_DIR + '/app.min.js'
+        '!' + APP_DIR + '/bundle.js'
     ]
 };
 
@@ -98,7 +98,7 @@ gulp.task('browserify', function() {
         return bundler.bundle()
             .pipe($.plumber())
             .on('error', gutil.log.bind(gutil, 'Browserify Error'))
-            .pipe(source('app.min.js'))
+            .pipe(source('bundle.js'))
             .pipe(buffer())
             .pipe($.sourcemaps.init({
                 loadMaps: true
@@ -115,9 +115,9 @@ gulp.task('browserify', function() {
 gulp.task('cachebust', function() {
     return gulp.src([
             'build/app.css',
-            'build/app.js'
+            'build/bundle.js'
         ], {
-            base: 'app'
+            base: config.app
         })
         .pipe(gulp.dest(config.build))
         .pipe($.rev())
@@ -211,15 +211,12 @@ gulp.task('serve', function() {
         }
     });
 
-    gulp.watch([
-        '**/*.scss',
-        '!bower_components/**'
-    ], {
+    gulp.watch(config.scss.files, {
         cwd: config.app
-    }, ['scss-dev']);
+    }, ['scss:dev']);
 });
 
-gulp.task('scss-dev', function(cb) {
+gulp.task('scss:dev', function(cb) {
     gulp.src(config.scss.src)
         .pipe($.plumber())
         .pipe($.sourcemaps.init())
@@ -246,7 +243,7 @@ gulp.task('scss-dev', function(cb) {
     cb();
 });
 
-gulp.task('scss-build', function() {
+gulp.task('scss:build', function() {
     return gulp.src(config.scss.src)
         .pipe(scsslint({
             config: '.scss-lint.yml'
@@ -272,7 +269,7 @@ gulp.task('default', [
     'browserify',
     'handlebars:dev',
     'serve',
-    'scss-dev',
+    'scss:dev',
     'watch'
 ]);
 
@@ -281,7 +278,7 @@ gulp.task('watch', function() {
 });
 
 gulp.task('build', function() {
-    runSequence('test', 'clean', ['scss-build'], 'cachebust', 'changelog');
+    runSequence('test', 'clean', ['scss:build'], 'cachebust', 'changelog');
 });
 
 gulp.task('patch', ['build'], function() {
