@@ -10,6 +10,7 @@ clean:
 	rm -rf app/bower_components/
 
 build:
+	make clean
 	make dependencies
 	gulp build
 
