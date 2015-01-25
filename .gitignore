@@ -14,7 +14,7 @@ node_modules/
 npm-debug.log
 app/bower_components/
 app/templates.js
-plato_report/
 build/
 Vagrantfile
 app/index.html
+app/bundle.js
