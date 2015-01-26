@@ -1,5 +1,5 @@
 /* global __dirname */
-'use strict';
+
 var fs = require('fs');
 
 var gulp = require('gulp');
