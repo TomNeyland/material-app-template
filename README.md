@@ -92,7 +92,7 @@ function ExampleState($stateProvider) {
         controller: ExampleCtrl,
         controllerAs: 'Example',
         url: '/example',
-        templateUrl: require.toUrl('./_example.html')
+        templateUrl: require('./_example.html')
     });
 }
 
