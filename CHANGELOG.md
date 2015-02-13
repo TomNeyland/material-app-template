@@ -1,3 +1,11 @@
+## 1.1.0 (2015-02-13)
+
+
+#### Features
+
+* **test:** Add some working tests ([ce8403ce](https://github.com/paradox41/app-template/commit/ce8403cea975a12e474a366d595c389c70e6f04f))
+
+
 ## 1.0.0 (2015-02-06)
 
 
