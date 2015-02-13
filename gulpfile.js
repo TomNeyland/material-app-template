@@ -29,6 +29,7 @@ var browserify = require('browserify');
 // transforms
 var to5ify = require('6to5ify');
 var partialify = require('partialify');
+var stripify = require('stripify');
 
 var APP_DIR = 'app';
 var BUILD_DIR = 'build';
@@ -40,7 +41,8 @@ config.build = BUILD_DIR;
 
 config.html = {
     files: [
-        APP_DIR + '/**/*.html'
+        APP_DIR + '/**/*.html',
+        '!' + APP_DIR + '/bower_components/**/*.html',
     ]
 };
 
@@ -50,7 +52,7 @@ config.js = {
         '!' + APP_DIR + '/**/*.spec.js',
         '!' + APP_DIR + '/bower_components/**/*.js',
         '!' + APP_DIR + '/templates.js',
-        '!' + APP_DIR + '/bundle.js'
+        '!' + APP_DIR + '/app.min.js'
     ]
 };
 
@@ -64,13 +66,18 @@ config.scss = {
     buildDest: BUILD_DIR + '/app.css'
 };
 
+config.browserify = {
+    in: './app/app.js',
+    out: 'app.min.js'
+};
+
 var release = function(importance) {
     return gulp.src(['./bower.json', './package.json'])
         .pipe($.bump({
             type: importance
         }))
         .pipe(gulp.dest('./'))
-        .pipe($.git.commit('chore: bumps package version'))
+        .pipe($.git.commit('chore(release): Bumps package version'))
         .pipe($.filter('bower.json'))
         .pipe(tagVersion());
 };
@@ -85,13 +92,14 @@ var handlebarOpts = {
 
 gulp.task('browserify', function() {
     var bundler = watchify(browserify({
-        entries: ['./app/app.js'],
+        entries: [config.browserify.in],
         debug: true,
         insertGlobals: true
     }));
 
     bundler.transform(to5ify);
     bundler.transform(partialify);
+
     bundler.on('error', gutil.log.bind(gutil, 'Browserify Error'));
 
     bundler.on('update', rebundle);
@@ -100,24 +108,49 @@ gulp.task('browserify', function() {
         return bundler.bundle()
             .pipe($.plumber())
             .on('error', gutil.log.bind(gutil, 'Browserify Error'))
-            .pipe(source('bundle.js'))
+            .pipe(source(config.browserify.out))
             .pipe(buffer())
             .pipe($.sourcemaps.init({
                 loadMaps: true
             }))
-            // Add transformation tasks to the pipeline here.
-            // .pipe($.uglify())
             .pipe($.sourcemaps.write('./'))
-            .pipe(gulp.dest(config.app));
+            .pipe(gulp.dest(config.app))
+            .pipe($.filter('*.js'))
+            .pipe(reload({
+                stream: true
+            }));
     }
 
     return rebundle();
 });
 
+gulp.task('browserify:build', function() {
+
+    var bundler = browserify({
+        entries: [config.browserify.in]
+    });
+
+    bundler.transform(to5ify);
+    bundler.transform(partialify);
+    bundler.transform(stripify);
+
+    var bundle = function() {
+        return bundler
+            .bundle()
+            .pipe(source(config.browserify.out))
+            .pipe(buffer())
+            // Add transformation tasks to the pipeline here.
+            .pipe($.uglify())
+            .pipe(gulp.dest(config.build));
+    };
+
+    return bundle();
+});
+
 gulp.task('cachebust', function() {
     return gulp.src([
             'build/app.css',
-            'build/bundle.js'
+            'build/app.min.js'
         ], {
             base: config.app
         })
@@ -161,9 +194,14 @@ gulp.task('convert', function() {
         .pipe(gulp.dest(config.app + 'bower_components/'));
 });
 
-gulp.task('copy', function() {
-    gulp.src(config.appDir + '**/*.html')
-        .pipe(gulp.dest(config.build));
+gulp.task('copy:build', function() {
+    return gulp.src([
+        './app/**/*.{tff,woff,woff2,ico,txt,png,svg,jpg,jpeg,json,geojson,csv}',
+        '!*.map',
+        '!./app/bower_components/**/*.{json,txt,csv}'
+    ], {
+        base: './app'
+    }).pipe(gulp.dest(config.build));
 });
 
 gulp.task('enforce', function() {
@@ -172,7 +210,7 @@ gulp.task('enforce', function() {
     if (!fs.existsSync(validateCommit)) {
         // copy the file over
         fs.createReadStream('./validate-commit-msg.js')
-        .pipe(fs.createWriteStream(validateCommit));
+            .pipe(fs.createWriteStream(validateCommit));
         // make it executable
         fs.chmodSync(validateCommit, '0755');
     }
@@ -184,7 +222,7 @@ gulp.task('handlebars:build', function() {
 
     // read in our handlebars template, compile it using
     // our manifest, and output it to index.html
-    return gulp.src(config.build + '/index.hbs')
+    return gulp.src(config.app + '/index.hbs')
         .pipe(handlebars(manifest, handlebarOpts))
         .pipe($.rename(config.build + '/index.html'))
         .pipe(gulp.dest('./'));
@@ -206,16 +244,17 @@ gulp.task('jshint', function() {
         .pipe($.jshint.reporter('jshint-stylish'));
 });
 
+gulp.task('reload', function() {
+    browserSync.reload();
+});
+
 gulp.task('serve', function() {
     browserSync({
         server: {
             baseDir: config.app
-        }
+        },
+        notify: false
     });
-
-    gulp.watch(config.scss.files, {
-        cwd: config.app
-    }, ['scss:dev']);
 });
 
 gulp.task('scss:dev', function(cb) {
@@ -225,20 +264,10 @@ gulp.task('scss:dev', function(cb) {
         .pipe($.sass({
             errLogToConsole: true
         }))
-        .pipe($.sourcemaps.write({
-            includeContent: false,
-            sourceRoot: '.'
-        }))
-        .pipe($.sourcemaps.init({
-            loadMaps: true
-        }))
         .pipe($.autoprefixer())
-        .pipe($.sourcemaps.write('.', {
-            includeContent: false,
-            sourceRoot: '.'
-        }))
         .pipe(gulp.dest(config.app))
         .pipe($.filter(config.app + '/*.css'))
+        .pipe($.filter('*.css'))
         .pipe(reload({
             stream: true
         }));
@@ -276,11 +305,19 @@ gulp.task('default', [
 ]);
 
 gulp.task('watch', function() {
-    gulp.watch(config.js.files, ['browserify']);
+    gulp.watch([config.js.files, config.html.files], ['browserify']);
+    gulp.watch(config.scss.files, ['scss:dev']);
+    gulp.watch('./app/*.hbs', ['handlebars:dev', 'reload']);
 });
 
 gulp.task('build', function() {
-    runSequence('test', 'clean', ['scss:build'], 'cachebust', 'changelog');
+    runSequence('test', 'jshint', 'clean', [
+        // these are done async
+        'copy:build',
+        'browserify:build',
+        'scss:build',
+        'changelog'
+    ], 'cachebust', 'handlebars:build');
 });
 
 gulp.task('patch', ['build'], function() {
