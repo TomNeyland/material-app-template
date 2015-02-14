@@ -49,9 +49,6 @@ package.json
 README.md
 ```
 
-### General
-- The project utilizes a fractal pattern
-
 ### JavaScript
 - Each module should be totally self-contained. Any functionality shared across modules should be moved into `common/`.
 - Modules can have their own directives, services, filters, etc. If multiple files are needed in order to maintain file size,
@@ -94,7 +91,7 @@ function ExampleState($stateProvider) {
         controller: ['data', Example],
         controllerAs: 'Example',
         url: '/example',
-        templateUrl: require('./_example.html')
+        template: require('./_example.html')
     });
 }
 
