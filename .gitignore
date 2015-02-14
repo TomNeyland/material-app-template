@@ -17,4 +17,3 @@ app/templates.js
 build/
 Vagrantfile
 app/index.html
-app/bundle.js
