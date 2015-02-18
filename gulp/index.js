@@ -1,0 +1,16 @@
+require('./tasks/browser-sync');
+require('./tasks/browserify');
+require('./tasks/build');
+require('./tasks/cachebust');
+require('./tasks/changelog');
+require('./tasks/clean');
+require('./tasks/convert');
+require('./tasks/copy');
+require('./tasks/default');
+require('./tasks/enforce');
+require('./tasks/handlebars');
+require('./tasks/jshint');
+require('./tasks/release');
+require('./tasks/scss');
+require('./tasks/test');
+require('./tasks/watch');
