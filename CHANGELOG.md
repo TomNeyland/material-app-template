@@ -1,4 +1,13 @@
+### 2.0.1 (2015-02-19)
+
+#### Bug Fixes
+
+* **gulpfile:** Fix karma path and testing ([b77752e4](https://github.com/paradox41/app-template/commit/b77752e409d255206d8fa50202096d5b6df38c9f))
+
+
 ## 2.0.0 (2015-02-19)
+
+#### Refactor
 
 * **gulpfile:** Make gulpfile more manageable ([1c0734c](https://github.com/paradox41/app-template/commit/1c0734c35f6ddf1359b8474eb6ef6f389bc1e409))
 
