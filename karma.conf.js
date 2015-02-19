@@ -30,7 +30,7 @@ module.exports = function(config) {
         browserify: {
             extensions: ['.js'],
             debug: true,
-            transform: ['6to5ify', 'partialify']
+            transform: ['babelify', 'partialify']
         }
     });
 };

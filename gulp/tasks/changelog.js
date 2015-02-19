@@ -10,9 +10,9 @@ gulp.task('changelog', function(done) {
         if (err) {
             return done(err);
         }
-        fs.writeFile('../../CHANGELOG.md', log, done);
+        fs.writeFile('CHANGELOG.md', log, done);
     }
-    fs.readFile('../../package.json', 'utf8', function(err, data) {
+    fs.readFile('./package.json', 'utf8', function(err, data) {
         var ref$ = JSON.parse(data);
         var repository = ref$.repository;
         var version = ref$.version;

@@ -1,3 +1,7 @@
+// this is needed because it *looks* like karma wants an absolute
+// path to the conf file
+var karmaConfigPath = require('path').resolve('.') + '/karma.conf.js';
+
 module.exports = {
     app: './app',
     build: './build',
@@ -28,5 +32,8 @@ module.exports = {
     browserify: {
         in: './app/app.js',
         out: 'app.min.js'
+    },
+    test: {
+        karma: karmaConfigPath
     }
 };
