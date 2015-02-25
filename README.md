@@ -8,7 +8,7 @@ Boilerplate for my Angular apps
 
 Clone the repo or download the zip file. If you cloned, `rm -rf .git`
 
-1. `make install`
+1. `make dependencies`
 
 ## Project Structure
 
