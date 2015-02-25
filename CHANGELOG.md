@@ -1,3 +1,16 @@
+### 2.1.0 (2015-02-25)
+
+
+#### Bug Fixes
+
+* **gulpfile:** Fix browserify and convert task ([0b0eb486](https://github.com/paradox41/app-template/commit/0b0eb486dbac30f3c1a48f3f26cdca1d1d841fb5))
+
+
+#### Features
+
+* **build:** Add service worker support ([1b5ae8b3](https://github.com/paradox41/app-template/commit/1b5ae8b3c28d65bb785df8c3a27fd88b3a378aca))
+
+
 ### 2.0.1 (2015-02-19)
 
 #### Bug Fixes
