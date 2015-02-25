@@ -7,6 +7,6 @@ gulp.task('build', function() {
         'copy:build',
         'browserify:build',
         'scss:build',
-        'changelog'
+        // 'changelog'
     ], 'cachebust', 'handlebars:build', 'generate-service-worker', 'uglify');
 });
