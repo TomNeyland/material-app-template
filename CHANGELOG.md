@@ -1,3 +1,11 @@
+## 2.1.0 (2015-03-03)
+
+
+#### Features
+
+* **build:** Add service worker support ([82739e2c](https://github.com/paradox41/app-template/commit/82739e2c3505f6187eda9c5953d3f47841467823))
+
+
 ### 2.1.0 (2015-02-25)
 
 
