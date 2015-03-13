@@ -1,6 +1,7 @@
-# app template
+# Angular Boilerplate
 
 [![License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/paradox41/app-template)
+[![Tag](https://img.shields.io/github/tag/paradox41/app-template.svg?style=flat)](https://github.com/paradox41/app-template)
 
 Boilerplate for my Angular apps
 
@@ -9,55 +10,13 @@ Boilerplate for my Angular apps
 Clone the repo or download the zip file. If you cloned, `rm -rf .git`
 
 1. `make dependencies`
+2. `gulp`
 
 ## Build
 
-1. `gulp build`
+1. `make build`
 
-## Project Structure
-
-```
-├── app/
-│   ├── assets/
-│   │   ├── stylesheets/
-│   │   ├── img/
-│   │   │   ├── png
-│   │   │   ├── svg
-|   |   |   |
-│   ├── bower_components/
-│   ├── common/
-│   |   ├── directives.js
-│   |   ├── filter.js
-│   |   ├── services.js
-│   ├── module-foo/
-|   │   ├── submodule-baz/
-|   |   |   |── _submodule-baz.html
-|   |   |   |── _submodule-baz.scss
-|   |   |   |── submodule-baz.js
-|   |   |── module-foo.js
-|   |   |── _module-foo.html
-|   |   |── _module-foo.scss
-|   |   |── directives.js
-|   |   |── services.js
-│   ├── module-bar/
-|   |   |── _module-bar.html
-|   |   |── _module-bar.scss
-|   |   |── module-bar.js
-|   |── app.js
-|   |── app.scss
-|   |── config.js
-│   |── index.html
-.bowerrc
-.editorconfig
-.gitignore
-.jsbeautifyrc
-.jshintrc
-bower.json
-gulpfile.js
-LICENSE
-package.json
-README.md
-```
+## Style
 
 ### JavaScript
 - Each module should be totally self-contained. Any functionality shared across modules should be moved into `common/`.
