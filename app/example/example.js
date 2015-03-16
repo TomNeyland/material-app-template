@@ -1,9 +1,8 @@
-import * as _ from 'lodash';
+import _ from 'lodash';
 
-class Example {
+class ExampleCtrl {
     constructor(data) {
         this.exampleData = data;
-        console.log(this);
     }
 
     someMethod() {
@@ -19,7 +18,10 @@ class Example {
 
 function ExampleState($stateProvider) {
     $stateProvider.state('app.example', {
-        controller: ['data', Example],
+        controller: [
+            'data',
+            ExampleCtrl
+        ],
         controllerAs: 'Example',
         url: '/example',
         template: require('./_example.html'),
@@ -32,3 +34,7 @@ function ExampleState($stateProvider) {
 }
 
 export default ['$stateProvider', ExampleState];
+
+export {
+    ExampleCtrl
+};

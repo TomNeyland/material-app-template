@@ -4,6 +4,8 @@ module.exports = function(config) {
         frameworks: ['mocha', 'browserify', 'chai'],
 
         files: [
+            './node_modules/angular/angular.js',
+            './node_modules/angular-mocks/angular-mocks.js',
             'app/**/*.spec.js'
         ],
 
