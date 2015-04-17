@@ -16,6 +16,8 @@ class ExampleCtrl {
     }
 }
 
+ExampleCtrl.$inject = ['data'];
+
 function ExampleState($stateProvider) {
     $stateProvider.state('app.example', {
         controller: [
@@ -33,7 +35,9 @@ function ExampleState($stateProvider) {
     });
 }
 
-export default ['$stateProvider', ExampleState];
+ExampleState.$inject = ['$stateProvider'];
+
+export default ExampleState;
 
 export {
     ExampleCtrl

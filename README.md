@@ -37,9 +37,9 @@ and the HTML partial and the JavaScript file should be placed together in that f
 A typical module will look something like this:
 
 ```javascript
-import * as _ from 'lodash';
+import _ from 'lodash';
 
-class Example {
+class ExampleCtrl {
     constructor(data) {
         this.exampleData = data;
     }
@@ -55,16 +55,32 @@ class Example {
     }
 }
 
+ExampleCtrl.$inject = ['data'];
+
 function ExampleState($stateProvider) {
     $stateProvider.state('app.example', {
-        controller: ['data', Example],
+        controller: [
+            'data',
+            ExampleCtrl
+        ],
         controllerAs: 'Example',
         url: '/example',
-        template: require('./_example.html')
+        template: require('./_example.html'),
+        resolve: {
+            data: [function() {
+                return [1, 2, 3, 4, 5, 6];
+            }]
+        }
     });
 }
 
-export default ['$stateProvider', ExampleState];
+ExampleState.$inject = ['$stateProvider'];
+
+export default ExampleState;
+
+export {
+    ExampleCtrl
+};
 ```
 
 ### Commit Conventions

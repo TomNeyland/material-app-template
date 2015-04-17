@@ -3,7 +3,7 @@ import 'angular-ui-router';
 
 import ExampleState from './example';
 
-angular.module('example', [
+export default angular.module('example', [
     'ui.router'
 ])
 

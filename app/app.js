@@ -3,14 +3,14 @@ import 'angular-ui-router';
 
 import filtersModule from './common/filters';
 
-import './example';
+import exampleModule from './example';
 
 const MODULE_NAME = 'app';
 
 angular.module(MODULE_NAME, [
     'ui.router',
     filtersModule.name,
-    'example'
+    exampleModule.name
 ])
 
 .config([
