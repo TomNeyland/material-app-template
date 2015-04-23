@@ -2,7 +2,7 @@
 dependencies:
 	npm cache clean
 	bower cache clean
-	npm install
+	npm --loglevel info install
 	bower install
 
 clean:
