@@ -26,7 +26,7 @@ describe('Example module', function() {
         }));
 
         it('should load example data', function() {
-            expect(scope.Example.exampleData).to.not.be.undefined();
+            expect(scope.Example.exampleData).to.not.be.undefined;
         });
 
         it('should load example data as an array', function() {
