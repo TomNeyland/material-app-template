@@ -4,7 +4,8 @@ import 'angular-ui-router';
 import ExampleState from './example';
 
 export default angular.module('example', [
-    'ui.router'
+    'ui.router',
+    'ngMaterial'
 ])
 
 .config(ExampleState);

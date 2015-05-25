@@ -26,11 +26,19 @@ module.exports = {
             '!./app/bower_components/**/*.scss'
         ],
         src: './app/app.scss',
+        materialFiles: [
+            './node_modules/angular-material-source/src/core/style/variables.scss',
+            './node_modules/angular-material-source/src/core/style/color-palette.scss',
+            './node_modules/angular-material-source/src/core/style/mixins.scss',
+            './node_modules/angular-material-source/src/core/style/structure.scss',
+            './node_modules/angular-material-source/src/core/style/typography.scss',
+            './node_modules/angular-material-source/src/core/style/layout.scss',
+            './node_modules/angular-material-source/src/{components,services}/**/*.scss'
+        ],
         devDest: './app/app.css',
         buildDest: './build/app.css'
     },
-    browserify: {
-        in: './app/app.js',
+    browserify: { in : './app/app.js',
         out: 'app.min.js'
     },
     test: {

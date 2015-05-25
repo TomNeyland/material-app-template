@@ -1,4 +1,8 @@
+import 'angular-aria';
+import 'angular-material';
+import 'angular-ui-router';
 import _ from 'lodash';
+
 
 class ExampleCtrl {
     constructor(data) {
@@ -19,7 +23,7 @@ class ExampleCtrl {
 ExampleCtrl.$inject = ['data'];
 
 function ExampleState($stateProvider) {
-    $stateProvider.state('app.example', {
+    $stateProvider.state('example', {
         controller: [
             'data',
             ExampleCtrl

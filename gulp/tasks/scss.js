@@ -7,11 +7,14 @@ var sass = require('gulp-sass');
 var autoprefixer = require('gulp-autoprefixer');
 var filter = require('gulp-filter');
 var minify = require('gulp-minify-css');
+var concat = require('gulp-concat');
 
 var reload = require('browser-sync').reload;
 
 gulp.task('scss:dev', function(cb) {
-    gulp.src(config.scss.src)
+    gulp
+        .src([config.scss.src].concat(config.scss.materialFiles))
+        .pipe(concat('app.css'))
         .pipe(plumber())
         .pipe(sourcemaps.init())
         .pipe(sass({
@@ -28,8 +31,9 @@ gulp.task('scss:dev', function(cb) {
 });
 
 gulp.task('scss:build', function() {
-    return gulp.src(config.scss.src)
-        .pipe(sass())
+    return gulp
+        .src([config.scss.src].concat(config.scss.materialFiles))
+        .pipe(concat('app.css'))
         .pipe(autoprefixer())
         .pipe(minify({
             keepSpecialComments: 0
