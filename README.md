@@ -1,8 +1,8 @@
 # Angular Boilerplate
 
-[![License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/TomNeyland/app-template)
-[![Tag](https://img.shields.io/github/tag/TomNeyland/app-template.svg?style=flat)](https://github.com/TomNeyland/app-template)
-[![Build](https://travis-ci.org/TomNeyland/app-template.svg)](https://travis-ci.org/TomNeyland/app-template)
+[![License](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/TomNeyland/material-app-template)
+[![Tag](https://img.shields.io/github/tag/TomNeyland/material-app-template.svg?style=flat)](https://github.com/TomNeyland/material-app-template)
+[![Build](https://travis-ci.org/TomNeyland/material-app-template.svg)](https://travis-ci.org/TomNeyland/material-app-template)
 
 Boilerplate for my Angular apps
 
