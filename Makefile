@@ -1,14 +1,10 @@
 
 dependencies:
 	npm cache clean
-	bower cache clean
 	npm --loglevel info install
-	bower install
 
 clean:
 	rm -rf node_modules/
-	rm -rf app/bower_components/
-
 build:
 	make clean
 	make dependencies
