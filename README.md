@@ -17,12 +17,13 @@ Clone the repo or download the zip file. If you cloned, `rm -rf .git`
 
 1. `make build`
 
+
 ## Style
 
 ### JavaScript
 - Each module should be totally self-contained. Any functionality shared across modules should be moved into `common/`.
 - Modules can have their own directives, services, filters, etc. If multiple files are needed in order to maintain file size,
-a folder should be created (`directives/`, `services/`, etc) and the broken up files should be placed into their respective folders
+a folder should be created and the files sensibly divided by function.
 with less abstract naming conventions.
 - JavaScript files should always be as close as possible - preferably on the same level - as their HTML partials.
 - If a directive has a partial - which they tend to - a new folder should be created that is named accordingly (meaning not something generic)
@@ -38,10 +39,28 @@ and the HTML partial and the JavaScript file should be placed together in that f
 A typical module will look something like this:
 
 ```javascript
+import 'angular-aria';
+import 'angular-material';
+import 'angular-ui-router';
+import angular from 'angular';
 import _ from 'lodash';
 
+/*
+	Module Definition
+ */
+
+const exampleModule = angular.module('example', [
+    'ui.router',
+    'ngMaterial'
+]);
+
+
+/*
+	Controller Definitions
+ */
+
 class ExampleCtrl {
-    constructor(data) {
+    constructor($scope, data) {
         this.exampleData = data;
     }
 
@@ -56,14 +75,23 @@ class ExampleCtrl {
     }
 }
 
-ExampleCtrl.$inject = ['data'];
+ExampleCtrl.$inject = ['$scope', 'data'];
 
-function ExampleState($stateProvider) {
-    $stateProvider.state('app.example', {
-        controller: [
-            'data',
-            ExampleCtrl
-        ],
+
+/*
+	Controller Registration
+*/
+
+exampleModule.controller('ExampleCtrl', ExampleCtrl);
+
+
+/*
+	State definitions
+ */
+
+exampleModule.config(['$stateProvider', function($stateProvider) {
+    $stateProvider.state('example', {
+        controller: 'ExampleCtrl',
         controllerAs: 'Example',
         url: '/example',
         template: require('./_example.html'),
@@ -73,15 +101,11 @@ function ExampleState($stateProvider) {
             }]
         }
     });
-}
+}]);
 
-ExampleState.$inject = ['$stateProvider'];
 
-export default ExampleState;
-
-export {
-    ExampleCtrl
-};
+// Export the module
+export default exampleModule;
 ```
 
 ### Commit Conventions
